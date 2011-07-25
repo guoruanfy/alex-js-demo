@@ -1,0 +1,504 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+
+
+
+  <title>CSS { border-color:transparent }</title>
+
+  <style type="text/css">
+    body{
+		 background:#000 url(http://static.flickr.com/120/281604826_153650adc4_o.jpg) 50% 0 no-repeat;
+	}
+	.p{
+		color:white;
+		font:1em/1.5 Arial;
+	}
+	h1{
+		font:1.4em/1.5 Arial;
+		margin:0;
+	}
+	a{
+		color:yellow;
+	}
+	
+	#container {
+      position: relative;
+      width: 400px;
+      height: 400px;  
+	  margin:100px auto;
+    }
+
+	#container div{
+		
+		overflow:hidden;
+		font-size:0;
+		border-color:transparent;
+		_filter:chroma(color=tomato);
+		_border-color:tomato;
+	}
+
+    
+  </style>
+
+  <script type="text/javascript" src="utils.js"></script>
+  <script type="text/javascript" src="metrics.js"></script>
+
+  <script type="text/javascript">
+  /* <![CDATA[ */
+
+
+//No More IE6 Background Flicker
+(function(){ 
+/*Use Object Detection to detect IE6*/ 
+var m = document.uniqueID /*IE*/ && document.compatMode /*>=IE6*/ && !window.XMLHttpRequest /*<=IE6*/ && document.execCommand ; try{ if(!!m){ m("BackgroundImageCache", false, true) /* = IE6 only */ } }catch(oh){}; })();
+
+
+
+
+
+    var trianglesHtml = [];
+    var MAX_DEPTH = 6;
+	var allowTransparency = true;
+	if(document.uniqueID && !window.XMLHttpRequest){ allowTransparency = false ;}
+	
+
+    function renderTriangles(node) {
+      node.innerHTML = trianglesHtml.join("");
+      trianglesHtml = [];
+    }
+
+    function drawRightTriangle(p1, p2, color, above) {
+
+      var sTransparentColor =  (allowTransparency )?'transparent':'tomato';
+
+
+      if (p1.y < p2.y) {
+        if (above) {
+          var result = "<div style=\"position:absolute;height:0px;left:" + Math.floor(p1.x) + "px;top:" + Math.ceil(p1.y) + "px;border-left-style:solid;border-top-style:solid;";
+          result += "border-left-color:"+ sTransparentColor +";border-top-color:" + color;
+          result += ";border-left-width:" + Math.ceil(p2.x - p1.x + 1) + "px;border-top-width:" + Math.ceil(p2.y - p1.y + 1) + "px;\"></div>";
+          trianglesHtml.push(result);
+        } else {
+          var result = "<div style=\"position:absolute;height:0px;left:" + Math.ceil(p1.x) + "px;top:" + Math.floor(p1.y) + "px;border-right-style:solid;border-bottom-style:solid;";
+          result += "border-right-color:"+ sTransparentColor +";border-bottom-color:" + color;
+          result += ";border-right-width:" + Math.ceil(p2.x - p1.x + 1) + "px;border-bottom-width:" + Math.ceil(p2.y - p1.y + 1) + "px;\"></div>";
+          trianglesHtml.push(result);
+        }
+      } else if (p1.y > p2.y) {
+        if (above) {
+          var result = "<div style=\"position:absolute;height:0px;left:" + Math.ceil(p1.x) + "px;top:" + Math.ceil(p2.y) + "px;border-right-style:solid;border-top-style:solid;";
+          result += "border-right-color"+ sTransparentColor +";border-top-color:" + color;
+          result += ";border-right-width:" + Math.ceil(p2.x - p1.x + 1) + "px;border-top-width:" + Math.ceil(p1.y - p2.y + 1) + "px;\"></div>";
+          trianglesHtml.push(result);
+        } else {
+          var result = "<div style=\"position:absolute;height:0px;left:" + Math.floor(p1.x) + "px;top:" + Math.floor(p2.y) + "px;border-left-style:solid;border-bottom-style:solid;";
+          result += "border-left-color:"+ sTransparentColor +";border-bottom-color:" + color;
+          result += ";border-left-width:" + Math.ceil(p2.x - p1.x + 1) + "px;border-bottom-width:" + Math.ceil(p1.y - p2.y + 1) + "px;\"></div>";
+          trianglesHtml.push(result);
+        }
+      }
+    }
+
+    function drawFlatBottomTriangle(p1, p2, p3, color) {
+      if (p1.x <= p2.x) {
+        var depth = 0;
+        var dy = (p3.y - p1.y) / (p3.x - p1.x);
+        var dx = (p2.x - p1.x) / (p2.y - p1.y);
+
+        while (p2.x - p1.x > 1) {
+          var p4 = {x: p2.x, y: p1.y + (p2.x - p1.x) * dy};
+          var p5 = {y: p4.y, x: p1.x + (p4.y - p1.y) * dx};
+
+          drawRightTriangle(p4, p3, color, false);
+          drawRightTriangle(p5, p2, color, true);
+          
+          if (++depth > MAX_DEPTH) {
+            return;
+          }
+
+          p2 = p5;
+          p3 = p4;
+        }
+
+        drawRightTriangle(p1, p3, color, false);
+      } else if (p1.x >= p3.x) {
+        var depth = 0;
+        var dy = (p2.y - p1.y) / (p2.x - p1.x);
+        var dx = (p3.x - p1.x) / (p3.y - p1.y);
+
+        while (p1.x - p3.x > 1) {
+          var p4 = {x: p3.x, y: p1.y + (p3.x - p1.x) * dy};
+          var p5 = {y: p4.y, x: p1.x + (p4.y - p1.y) * dx};
+
+          drawRightTriangle(p2, p4, color, false);
+          drawRightTriangle(p3, p5, color, true);
+
+          if (++depth > MAX_DEPTH) {
+            return;
+          }
+
+          p2 = p4;
+          p3 = p5;
+        }
+
+        drawRightTriangle(p2, p1, color, false);
+      } else {
+        drawRightTriangle(p2, p1, color, false);
+        drawRightTriangle(p1, p3, color, false);
+      }
+    }
+
+    function drawFlatTopTriangle(p1, p2, p3, color) {
+      if (p1.x <= p2.x) {
+        var depth = 0;
+        var dy = (p3.y - p1.y) / (p3.x - p1.x);
+        var dx = (p2.x - p1.x) / (p2.y - p1.y);
+
+        while (p2.x - p1.x > 1) {
+          var p4 = {x: p2.x, y: p1.y + (p2.x - p1.x) * dy};
+          var p5 = {y: p4.y, x: p1.x + (p4.y - p1.y) * dx};
+
+          drawRightTriangle(p4, p3, color, true);
+          drawRightTriangle(p5, p2, color, false);
+
+          if (++depth > MAX_DEPTH) {
+            return;
+          }
+
+          p2 = p5;
+          p3 = p4;
+        }
+
+        drawRightTriangle(p1, p3, color, true);
+      } else if (p1.x >= p3.x) {
+        var depth = 0;
+        var dy = (p2.y - p1.y) / (p2.x - p1.x);
+        var dx = (p3.x - p1.x) / (p3.y - p1.y);
+
+        while (p1.x - p3.x > 1) {
+          var p4 = {x: p3.x, y: p1.y + (p3.x - p1.x) * dy};
+          var p5 = {y: p4.y, x: p1.x + (p4.y - p1.y) * dx};
+
+          drawRightTriangle(p2, p4, color, true);
+          drawRightTriangle(p3, p5, color, false);
+
+          if (++depth > MAX_DEPTH) {
+            return;
+          }
+
+          p2 = p4;
+          p3 = p5;
+        }
+
+        drawRightTriangle(p2, p1, color, true);
+      } else {
+        drawRightTriangle(p2, p1, color, true);
+        drawRightTriangle(p1, p3, color, true);
+      }
+    }
+
+    function compareY(p1, p2) {
+      return p1.y - p2.y;
+    }
+
+    function drawTriangle(points, color) {
+      points.sort(compareY);
+      var p1 = points[0];
+      var p2 = points[1];
+      var p3 = points[2];
+
+      if (p2.y - p1.y < 0) {
+        if (p1.x > p2.x) {
+          drawFlatTopTriangle(p3, p2, p1, color);
+        } else {
+          drawFlatTopTriangle(p3, p1, p2, color);
+        }
+      } else if (p3.y - p2.y < 0) {
+        if (p2.x > p3.x) {
+          drawFlatBottomTriangle(p1, p3, p2, color);
+        } else {
+          drawFlatBottomTriangle(p1, p2, p3, color);
+        }
+      } else {
+        var p4 = {y: p2.y, x: p1.x + (p2.y - p1.y) * ((p3.x - p1.x) / (p3.y - p1.y))};
+
+        if (p2.x > p4.x) {
+          drawFlatBottomTriangle(p1, p4, p2, color);
+          drawFlatTopTriangle(p3, p4, p2, color);
+        } else {
+          drawFlatBottomTriangle(p1, p2, p4, color);
+          drawFlatTopTriangle(p3, p2, p4, color);
+        }
+      }
+    }
+
+    function drawRandomTriangle(xMin, xRange, yMin, yRange) {
+      var p1 = {x: xMin + Math.random() * xRange, y: yMin + Math.random() * yRange};
+      var p2 = {x: xMin + Math.random() * xRange, y: yMin + Math.random() * yRange};
+      var p3 = {x: xMin + Math.random() * xRange, y: yMin + Math.random() * yRange};
+      
+      var color = "rgb(" +
+                  Math.floor(Math.random() * 256) + "," +
+                  Math.floor(Math.random() * 256) + "," +
+                  Math.floor(Math.random() * 256) + ")";
+
+      drawTriangle([p1, p2, p3], color);
+    }
+
+    function initializeNormals(obj) {
+      for (var i = 0, poly; poly = obj.polys[i]; ++i) {
+        poly.norm = Vector.crossProduct(Vector.subtract(obj.points[poly.points[1]], obj.points[poly.points[0]]),
+                                        Vector.subtract(obj.points[poly.points[2]], obj.points[poly.points[0]])).normalize()
+      }
+    }
+
+    var view = {
+     pos: new Vector(),
+     dir: new Vector(0, 0, -1)
+    };
+    
+    var light = {
+      dir: Vector.rotate(Vector.rotate(new Vector(0, 0, -1), 0.2, "x"), 0.3, "y"),
+      intensity: 0.85,
+      ambient: 0.15
+    };
+    
+    var points = [];
+    var polys = [];
+
+    var star = {
+      pos: new Vector(0, 0, -500),
+      orientation: new Quat(),
+
+      points: [
+        new Vector(-30, 30, 30),
+        new Vector(30, 30, 30),
+        new Vector(30, -30, 30),
+        new Vector(-30, -30, 30),
+        new Vector(-30, 30, -30),
+        new Vector(30, 30, -30),
+        new Vector(30, -30, -30),
+        new Vector(-30, -30, -30),
+
+        new Vector(0, 200, 0),
+        new Vector(200, 0, 0),
+        new Vector(0, -200, 0),
+        new Vector(-200, 0, 0),
+        new Vector(0, 0, 200),
+        new Vector(0, 0, -200)
+      ],
+
+      polys: [
+        { points: [0, 12, 1], color: new Vector(255, 64, 0) },
+        { points: [1, 12, 2], color: new Vector(255, 64, 0) },
+        { points: [2, 12, 3], color: new Vector(255, 64, 0) },
+        { points: [3, 12, 0], color: new Vector(255, 64, 0) },
+
+        { points: [4, 13, 7], color: new Vector(255, 0, 0) },
+        { points: [7, 13, 6], color: new Vector(255, 0, 0) },
+        { points: [6, 13, 5], color: new Vector(255, 0, 0) },
+        { points: [5, 13, 4], color: new Vector(255, 0, 0) },
+
+        { points: [0, 8, 4], color: new Vector(0, 0, 255) },
+        { points: [4, 8, 5], color: new Vector(0, 0, 255) },
+        { points: [5, 8, 1], color: new Vector(0, 0, 255) },
+        { points: [1, 8, 0], color: new Vector(0, 0, 255) },
+
+        { points: [2, 10, 6], color: new Vector(0, 0, 255) },
+        { points: [6, 10, 7], color: new Vector(0, 0, 255) },
+        { points: [7, 10, 3], color: new Vector(0, 0, 255) },
+        { points: [3, 10, 2], color: new Vector(0, 0, 255) },
+
+        { points: [1, 9, 5], color: new Vector(0, 255, 0) },
+        { points: [5, 9, 6], color: new Vector(0, 255, 0) },
+        { points: [6, 9, 2], color: new Vector(0, 255, 0) },
+        { points: [2, 9, 1], color: new Vector(0, 255, 0) },
+
+        { points: [3, 11, 7], color: new Vector(0, 255, 0) },
+        { points: [7, 11, 4], color: new Vector(0, 255, 0) },
+        { points: [4, 11, 0], color: new Vector(0, 255, 0) },
+        { points: [0, 11, 3], color: new Vector(0, 255, 0) }
+      ]
+    };
+
+    initializeNormals(star);
+
+    function addObjectPolys(obj) {
+      var pointsOffset = self.points.length;
+      
+      for (var i = 0, point; point = obj.points[i]; ++i) {
+        var newPoint = obj.orientation.translateVector(point).add(obj.pos);
+
+        self.points.push(newPoint);
+      }
+      
+      for (var i = 0, poly; poly = obj.polys[i]; ++i) {
+        var norm = obj.orientation.translateVector(poly.norm);
+
+        var p1 = pointsOffset + poly.points[0];
+        var p2 = pointsOffset + poly.points[1];
+        var p3 = pointsOffset + poly.points[2];
+
+        if (Vector.dotProduct(norm, Vector.subtract(self.points[p1], view.pos)) >= 0) {
+          continue;
+        }
+
+        var color = Vector.scale(poly.color, light.ambient + Math.max(0, -light.intensity * Vector.dotProduct(norm, light.dir)));
+
+        var z = self.points[p1].z +
+                self.points[p2].z +
+                self.points[p3].z;
+
+        self.polys.push({
+          points: [p1, p2, p3],
+          color: color,
+          z: z
+        });
+      }
+      
+      for (var i = pointsOffset, point; point = self.points[i]; ++i) {
+        point.x /= -point.z * 0.002;
+        point.y /= -point.z * 0.002;
+        point.x += 200;
+        point.y = 200 - point.y;
+      }
+    }
+
+    function compareZ(p1, p2) {
+      return p1.z - p2.z;
+    }
+
+    function drawPolys(node) {
+      self.polys.sort(compareZ);
+    
+      for (var i = 0, poly; poly = self.polys[i]; ++i) {
+        drawTriangle([self.points[poly.points[0]], self.points[poly.points[1]], self.points[poly.points[2]]],
+                     "rgb(" + Math.floor(poly.color.x) + "," + Math.floor(poly.color.y) + "," + Math.floor(poly.color.z) + ")");
+      }
+
+      self.polys = [];
+      self.points = [];
+      renderTriangles(node);
+    }
+
+    var rotateX = 0;
+    var rotateY = 0;
+    var rotateZ = 0;
+    
+    var xUnit = new Vector(1, 0, 0);
+    var yUnit = new Vector(0, 1, 0);
+    var zUnit = new Vector(0, 0, 1);
+    
+    var manuallyRotated = false;
+    var ROTATE_SPEED = 0.07;
+    var TARGET_FPS = 16;
+
+    function draw() {
+      addObjectPolys(star);
+      drawPolys(container);
+    }
+
+    function animate() {
+      if (!manuallyRotated) {
+        star.orientation = Quat.rotate(star.orientation, yUnit, ROTATE_SPEED);
+      } else {
+        if (rotateX) {
+          star.orientation = Quat.rotate(star.orientation, xUnit, rotateX);
+        }
+
+        if (rotateY) {
+          star.orientation = Quat.rotate(star.orientation, yUnit, rotateY);
+        }
+
+        if (rotateZ) {
+          star.orientation = Quat.rotate(star.orientation, zUnit, rotateZ);
+        }
+      }
+
+      draw();
+	  setTimeout(animate, 1000 / TARGET_FPS);
+    }
+
+    function load() {
+      self.container = document.getElementById("container");
+      star.orientation = Quat.rotate(star.orientation, xUnit, -.5);
+      star.orientation = Quat.rotate(star.orientation, yUnit, -.5);
+      setTimeout(animate, 1000 / TARGET_FPS);
+    }
+    
+    function keydown(event) {
+      var key = String.fromCharCode(event.keyCode || event.which);
+      
+      switch (key) {
+        case "A":
+          rotateY = -ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        case "D":
+          rotateY = ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        case "W":
+          rotateX = -ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        case "S":
+          rotateX = ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        case "Q":
+          rotateZ = -ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        case "E":
+          rotateZ = ROTATE_SPEED;
+          manuallyRotated = true;
+          break;
+        default:
+          return true;
+      }
+      
+      return false;
+    }
+
+    function keyup(event) {
+      var key = String.fromCharCode(event.keyCode || event.which);
+
+      switch (key) {
+        case "A":
+        case "D":
+          rotateY = 0;
+          break;
+        case "W":
+        case "S":
+          rotateX = 0;
+          break;
+        case "Q":
+        case "E":
+          rotateZ = 0;
+          break;
+        default:
+          return true;
+      }
+      
+      return false;
+    }
+
+  /* ]]> */
+  </script>
+</head>
+<body onload="load()" onkeydown="keydown(event)" onkeyup="keyup(event)">
+ 
+  <div class="p">
+  <h1><img src="http://us.i1.yimg.com/us.yimg.com/i/mesg/emoticons7/104.gif"> Important Notice!!</h1>
+  I changed the source from <a href="http://www.uselesspickles.com/triangles/demo.html">www.uselesspickles.com</a>
+  to make it compatible with IE6. <br />This work is a concept of proof to demostarte that IE can render transparent border color.
+  <br />You may want to visit the original site <a href="http://www.uselesspickles.com/triangles/demo.html">www.uselesspickles.com</a> to get more detail about this great JavaScript 3D engine. Thanks.
+  </div>
+  
+  <div id="container"></div>
+  
+</body>
+</html>

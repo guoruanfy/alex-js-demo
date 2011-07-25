@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>opcssTest</title>
+<style>
+	p{
+		height:100px;
+		width:100px;
+		background-color:red;
+		display:block;
+		position:absolute;
+	}
+</style>
+<script src="opcss.js"></script>
+<script>
+	window.onload=function(){
+		var p=document.getElementsByTagName("p")[0];
+		//一个元素CSS的最终值并不一定等于样式对象值
+		//alert(p.style.height);
+		//alert(getStyle(p,"height"));
+
+		var message=document.getElementById("msg");
+		message.innerHTML="<b>sdfsd</b>";
+		//alert(pageX(p)+":"+pageY(p));
+		//alert(fullHeight(p));
+		//alert(fullWidth(p));
+
+		//setOpacity(p,10);
+		//slideDown(p);
+		toCenter(p);
+	};
+</script>
+</head>
+<body>
+	<p>I should be 100 px!</p><br/>
+	<div id="msg"></div>
+</body>
+</html>

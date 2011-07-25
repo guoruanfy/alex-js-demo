@@ -1,0 +1,13 @@
+使用Modernizr
+
+modernizr的用法很简单，仅仅在页面中引入库的js文件即可：
+<script type="text/javascript" src="modernizr-1.5.js"></script>
+Modernizr是开源的，但是由于某种原因，它被G-FW给封掉了。
+Modernizr @ git
+
+modernizr项目托管在git，你可以通过以下地址获取它：
+http://github.com/Modernizr/Modernizr
+作者还在git提供了一个简单的输出页：
+http://modernizr.github.com/Modernizr/output.html
+和一个详细测试页面：
+http://modernizr.github.com/Modernizr/test/index.html

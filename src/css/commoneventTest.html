@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>commonevent test</title>
+<script src="commonevent.js"></script>
+<script>
+	addEvent(window,"load",function(){
+		addEvent(window,"keydown",function(e){
+			if(e.keyCode==83&&e.ctrlKey)
+			{			
+
+				document.getElementsByTagName("div")[0].innerHTML="dsfds";
+				e.preventDefault();
+			}
+			//阻止复制			
+			if(e.keyCode==67&&e.ctrlKey)
+			{
+				e.preventDefault();
+				document.getElementsByTagName("div")[0].innerHTML="dsfdsdsfdsfda";
+			}
+		});
+	});
+</script>
+</head>
+<body>
+	<b>this page be copied.</b>
+	<div></div>
+</body>
+</html>
