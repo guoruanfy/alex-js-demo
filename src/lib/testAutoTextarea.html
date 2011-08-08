@@ -1,0 +1,21 @@
+<!DOCTYPE html> 
+<html>
+	<head>
+		<title>AutoTextarea test</title>
+		<script src="jquery-1.4.2.min.js"></script>
+		<script src="autoTextarea.js"></script>
+		<script>
+		$(function(){
+			$(".chackTextarea-area").autoTextarea({
+	            maxHeight:220
+	         })
+		});
+		</script>
+		<style>
+				.chackTextarea-area{  line-height: 20px; font-size: 14px; font-family: "Helvetica Neue", Helvetica, Arial;resize: none; padding: 0;border: 1px solid #CDCDCD; width: 400px; height: 40px}
+		</style>
+	</head>
+	<body>
+          <textarea name="textarea" id="textarea1" cols="60" rows="4" class="chackTextarea-area" style="height:40px"></textarea>
+	</body>
+</html>
