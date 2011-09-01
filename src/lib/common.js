@@ -22,3 +22,26 @@
 		}
 		return true;
 	}
+	
+	function fadeOut(elem) {
+		var currentOpacity = 100;
+		var timer = setInterval(function() {
+			if(currentOpacity>0) {
+				currentOpacity -= 10;
+				setOpacity(elem,currentOpacity);
+			}
+			else {
+				clearInterval(timer);
+				elem.innerHTML = "";
+			}
+		},"80");
+	};
+
+	function setOpacity(elem,level) {
+		if(elem.filters) {
+			elem.filters.alpha.opacity = level;
+		}
+		else {
+			elem.style.opacity = level / 100;
+		}
+	};
